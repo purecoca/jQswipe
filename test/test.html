@@ -7,7 +7,15 @@
 		<title>Swipe Test</title>
 		<link rel="stylesheet" href="./testsuite.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+		<script type="text/javascript" charset="utf-8">
+			// make sure jQswipe doesn't rely on window.$
+			var _$ = $;
+			$ = {};
+		</script>
 		<script src="../jQswipe.js" type="text/javascript"></script>
+		<script type="text/javascript" charset="utf-8">
+			$ = _$;
+		</script>
 		<script src="./testrunner.js" type="text/javascript"></script>
 
 		<script type="text/javascript">
