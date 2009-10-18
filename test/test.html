@@ -212,6 +212,21 @@
 					
 					expect(5);
 				});
+				
+				test("Test $.event.special.swipe fails", function(){
+					var s = $.event.special.swipe,
+						el = $('#main'),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						_targetTouches = window.event.targetTouches;
+					
+					window.event.targetTouches = t1;
+					s.startHandler.apply(el);
+					window.event.targetTouches = _targetTouches;
+					
+					s.cancelHandler.apply(el);
+					
+					equals(s.cancelled(el), true, 'cancelled should be true');
+				});
 
 				test("Test $.event.special.rightSwipe", function(){
 					var s = $.event.special.rightSwipe,

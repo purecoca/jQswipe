@@ -172,7 +172,7 @@
         };
 
         that.cancelHandler = function() {
-            that.cancelled(this, window.event.targetTouches);
+            that.cancelled(this, true);
         };
 
         that.endHandler = function(event) {
@@ -187,8 +187,6 @@
     };
 
     swipe.Swipe.prototype = swipe.protoSwipe;
-
-
 
     $.event.special.swipe = new swipe.Swipe();
     $.event.special.rightSwipe = new swipe.Swipe('rightSwipe');
