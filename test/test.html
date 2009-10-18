@@ -293,6 +293,41 @@
 					expect(5);
 				});
 
+				test("Test $.event.special.swipe and $.event.special.leftSwipe", function(){
+					var s1 = $.event.special.swipe,
+						s2 = $.event.special.leftSwipe,
+						el = $('#main'),
+						t1 = [ {pageX: 31, pageY: 2} ],
+						t2 = [ {pageX: 1, pageY: 2} ],
+						_targetTouches = window.event.targetTouches,
+						_handle = $.event.handle;
+					
+					window.event.targetTouches = t1;
+					s1.startHandler.apply(el);
+					s2.startHandler.apply(el);
+					
+					window.event.targetTouches = t2;
+					s1.moveHandler.apply(el);
+					s2.moveHandler.apply(el);
+					window.event.targetTouches = _targetTouches;
+					
+					$.event.handle = function(){
+						ok(true, '$.event.handle should be called');
+						same(this, el, "this should be set to the target element");
+					};
+					_event = {};
+					s1.endHandler.apply(el, [_event]);
+					s2.endHandler.apply(el, [_event]);
+					$.event.handle = _handle;
+					
+					equals(_event.type, 'leftSwipe', 'event.type === "leftSwipe"');
+					ok(s1.cancelled(el) === true, 'cancelled should be false');
+					ok(s2.cancelled(el) === false, 'cancelled should be false');
+					ok(s2.ended(el) === true, 'ended should be true');
+					
+					expect(6);
+				});
+
 			});
 				
 		</script>

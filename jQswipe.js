@@ -63,7 +63,7 @@
     };
 
     swipe.protoSwipe = {
-        dataPrefix: 'events.special.swipeManager',
+        dataPrefix: 'events.special.swipe',
 
         bound: {
             minLength: 30,
@@ -176,6 +176,7 @@
 
         evenType = evenType || 'swipe';
         this.validate = validator || $.fn.swipe.protoSwipe.validate;
+        this.dataPrefix = 'events.special.' + evenType;
 
         this.setup = function(data, namespaces) {
             var $el = $(this);
