@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+		<title>Swipe Test</title>
+		<link rel="stylesheet" href="./testsuite.css" type="text/css" media="screen" title="no title" charset="utf-8">
+		<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+		<script src="../jQswipe.js" type="text/javascript"></script>
+		<script src="./testrunner.js" type="text/javascript"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				var swipe = $.fn.swipe;
+				
+				test("Test Point", function() {
+					var p1 = new swipe.Point(1, 2);
+						
+					equals( 1, p1.x, "p1.x should have been set to 1" );
+					equals( 2, p1.y, "p1.y should have been set to 2" );
+				});
+				
+				test("Test Point.fromTouch", function() {
+					var p1 = swipe.Point.fromTouch({pageX: 1, pageY: 2});
+						
+					equals( 1, p1.x, "p1.x should have been set to 1" );
+					equals( 2, p1.y, "p1.y should have been set to 2" );
+				});
+				
+				test("Test Point's diff method", function() {
+					var p1 = new swipe.Point(1, 2),
+						p2 = new swipe.Point(5, 7),
+						diff = p2.diff(p1);
+						
+					equals( 4, diff.x, "Wrong distance on x" );
+					equals( 5, diff.y, "Wrong initialisation of y" );
+				});
+				
+				test("Test protoSwipe.start", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ];
+					
+					
+					s.start(el, t1);
+					equals(1, s.startPoint(el).x, 'start point x should be set to 1');
+					equals(2, s.startPoint(el).y, 'start point y should be set to 2');
+					equals(1, s.currentPoint(el).x, 'start point x should be set to 1');
+					equals(2, s.currentPoint(el).y, 'start point y should be set to 2');
+					equals(undefined, s.previousPoint(el), 'previousPoint should not be set');
+					ok(s.cancelled(el) === false, 'cancelled should be false');
+					ok(s.ended(el) === false, 'ended should be false');
+					
+				});
+				
+				test("Test protoSwipe.start with multitouch", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [
+							{pageX: 1, pageY: 2},
+							{pageX: 5, pageY: 7}
+						];
+					
+					s.start(el, t1);
+					ok(s.cancelled(el) === true, 'cancelled should be true');
+				});
+				
+				test("Test protoSwipe.update", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 5, pageY: 3} ],
+						t3 = [ {pageX: 5, pageY: 3} ],
+						t4 = [ {pageX: 10, pageY: 12} ];
+					
+					s.start(el, t1);
+					s.update(el, t2);
+					s.update(el, t3);
+					s.update(el, t4);
+					
+					equals(1, s.startPoint(el).x, 'start point x should be set to 1');
+					equals(2, s.startPoint(el).y, 'start point y should be set to 2');
+					equals(5, s.previousPoint(el).x, 'start point x should be set to 5');
+					equals(3, s.previousPoint(el).y, 'start point y should be set to 3');
+					equals(10, s.currentPoint(el).x, 'start point x should be set to 10');
+					equals(12,  s.currentPoint(el).y, 'start point y should be set to 12');
+					ok(s.cancelled(el) === false, 'cancelled should be false');
+					ok(s.ended(el) === false, 'ended should be false');
+					
+				});
+				
+				test("Test protoSwipe.update with multitouch", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 5, pageY: 3}, {pageX: 25, pageY: 23} ],
+						t3 = [ {pageX: 10, pageY: 4} ];
+						
+					
+					s.start(el, t1);
+					s.update(el, t2);
+					ok(s.cancelled(el) === true, 'cancelled should be true');
+					s.update(el, t3);
+					ok(s.cancelled(el) === true, 'cancelled should be true');
+					
+				});
+				
+				test("Test protoSwipe.update with wrong swipe on y", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 5, pageY: 13} ],
+						t3 = [ {pageX: 10, pageY: 4} ];
+						
+					
+					s.start(el, t1);
+					s.update(el, t2);
+					ok(s.cancelled(el) === true, 'cancelled should be true');
+					s.update(el, t3);
+					ok(s.cancelled(el) === true, 'cancelled should be true');
+					
+				});
+				
+				test("Test protoSwipe.update with wrong swipe on x", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 0, pageY: 3} ],
+						t3 = [ {pageX: 10, pageY: 4} ];
+						
+					
+					s.start(el, t1);
+					s.update(el, t2);
+					ok(s.cancelled(el) === true, 'cancelled should be true');
+					s.update(el, t3);
+					ok(s.cancelled(el) === true, 'cancelled should be true');
+					
+				});
+				
+				test("Test protoSwipe.end", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 31, pageY: 3} ];
+						
+					
+					s.start(el, t1);
+					s.update(el, t2);
+					s.end(el);
+					
+					ok(s.cancelled(el) === false, 'cancelled should be false');
+					ok(s.ended(el) === true, 'ended should be true');
+				});
+
+				test("Test protoSwipe.end wrong y", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 31, pageY: 13} ];
+						
+					
+					s.start(el, t1);
+					s.update(el, t2);
+					s.end(el);
+					
+					ok(s.cancelled(el) === true, 'cancelled should be false');
+					ok(s.ended(el) === true, 'ended should be true');
+				});
+
+				test("Test protoSwipe.end wrong x", function(){
+					var s = swipe.protoSwipe,
+						el = $('#main').get(0),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 30, pageY: 2} ];
+						
+					
+					s.start(el, t1);
+					s.update(el, t2);
+					s.end(el);
+					
+					ok(s.cancelled(el) === true, 'cancelled should be false');
+					ok(s.ended(el) === true, 'ended should be true');
+				});
+				
+				test("Test $.event.special.swipe", function(){
+					var s = $.event.special.swipe,
+						el = $('#main'),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 31, pageY: 2} ],
+						_targetTouches = window.event.targetTouches,
+						_handle = $.event.handle;
+					
+					window.event.targetTouches = t1;
+					s.startHandler.apply(el);
+					
+					window.event.targetTouches = t2;
+					s.moveHandler.apply(el);
+					window.event.targetTouches = _targetTouches;
+					
+					$.event.handle = function(){
+						ok(true, '$.event.handle should be called');
+						same(this, el, "this should be set to the target element");
+					};
+					_event = {};
+					s.endHandler.apply(el, [_event]);
+					$.event.handle = _handle;
+					
+					equals(_event.type, 'swipe', 'event.type === "swipe"');
+					ok(s.cancelled(el) === false, 'cancelled should be false');
+					ok(s.ended(el) === true, 'ended should be true');
+					
+					expect(5);
+				});
+
+				test("Test $.event.special.rightSwipe", function(){
+					var s = $.event.special.rightSwipe,
+						el = $('#main'),
+						t1 = [ {pageX: 1, pageY: 2} ],
+						t2 = [ {pageX: 31, pageY: 2} ],
+						_targetTouches = window.event.targetTouches,
+						_handle = $.event.handle;
+					
+					window.event.targetTouches = t1;
+					s.startHandler.apply(el);
+					
+					window.event.targetTouches = t2;
+					s.moveHandler.apply(el);
+					window.event.targetTouches = _targetTouches;
+					
+					$.event.handle = function(){
+						ok(true, '$.event.handle should be called');
+						same(this, el, "this should be set to the target element");
+					};
+					_event = {};
+					s.endHandler.apply(el, [_event]);
+					$.event.handle = _handle;
+					
+					equals(_event.type, 'rightSwipe', 'event.type === "rightSwipe"');
+					ok(s.cancelled(el) === false, 'cancelled should be false');
+					ok(s.ended(el) === true, 'ended should be true');
+					
+					expect(5);
+				});
+
+				test("Test $.event.special.leftSwipe", function(){
+					var s = $.event.special.leftSwipe,
+						el = $('#main'),
+						t1 = [ {pageX: 31, pageY: 2} ],
+						t2 = [ {pageX: 1, pageY: 2} ],
+						_targetTouches = window.event.targetTouches,
+						_handle = $.event.handle;
+					
+					window.event.targetTouches = t1;
+					s.startHandler.apply(el);
+					
+					window.event.targetTouches = t2;
+					s.moveHandler.apply(el);
+					window.event.targetTouches = _targetTouches;
+					
+					$.event.handle = function(){
+						ok(true, '$.event.handle should be called');
+						same(this, el, "this should be set to the target element");
+					};
+					_event = {};
+					s.endHandler.apply(el, [_event]);
+					$.event.handle = _handle;
+					
+					equals(_event.type, 'leftSwipe', 'event.type === "leftSwipe"');
+					ok(s.cancelled(el) === false, 'cancelled should be false');
+					ok(s.ended(el) === true, 'ended should be true');
+					
+					expect(5);
+				});
+
+			});
+				
+		</script>
+		
+	</head>
+
+	<body>
+		
+		<h1 id="qunit-header">Swipe Test</h1>
+		
+		<h2 id="banner"></h2>
+		<h2 id="userAgent"></h2>
+		<ol id="tests"></ol>
+		
+		<div id="main"></div>
+
+	</body>
+
+</html>
+
