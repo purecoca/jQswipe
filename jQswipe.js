@@ -32,8 +32,8 @@
         dataPrefix: 'events.special.swipeManager',
 
         bound: {
-            x: 30,
-            y: 10
+            minLength: 30,
+            maxWidth: 10
         },
 
         start: function(el, touches) {
@@ -78,7 +78,7 @@
                 diffWithPrevious = newPoint.diff(this.previousPoint(el));
 
             // Should not be hight or too low
-            if (diffWithStart.y > this.bound.y || diffWithStart.y < -this.bound.y) {
+            if (diffWithStart.y > this.bound.maxWidth || diffWithStart.y < -this.bound.maxWidth) {
                 return false;
             }
 
@@ -88,7 +88,7 @@
             }
 
             // If swipe ended, the swipe be long enough
-            if (this.ended(el) && diffWithStart.x < this.bound.x) {
+            if (this.ended(el) && diffWithStart.x < this.bound.minLength) {
                 return false;
             }
 
@@ -195,7 +195,7 @@
             diffWithPrevious = newPoint.diff(this.previousPoint(el));
 
         // Should not be hight or too low
-        if (diffWithStart.y > this.bound.y || diffWithStart.y < -this.bound.y) {
+        if (diffWithStart.y > this.bound.maxWidth || diffWithStart.y < -this.bound.maxWidth) {
             return false;
         }
 
@@ -205,7 +205,7 @@
         }
 
         // If swipe ended, the swipe be long enough
-        if (this.ended(el) && diffWithStart.x > -this.bound.x) {
+        if (this.ended(el) && diffWithStart.x > -this.bound.minLength) {
             return false;
         }
 
