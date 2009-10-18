@@ -160,18 +160,14 @@
         ended: function(el, ended) {
             return this.data(el, 'ended', ended);
         },
-
-        log: function(context, el) {
-            var st = this.startPoint(el) || "undefined",
-                pr = this.previousPoint(el) || "undefined",
-                cu = this.previousPoint(el) || "undefined",
-                log = window.console && window.console.log || function () {};
-            
-            
-            log('[' + context + ']' +
-                'start: ' + st.toString() +
-                '; previous: ' + pr.toString() +
-                ': current: ' + cu.toString());
+        
+        getTouches: function() {
+            var warn = window.console && window.console.warn || function () {},
+                touches = window.event && window.event.targetTouches;
+            if (touches === undefined) {
+                warn('No window.event.targetTouches');
+            }
+            return touches;
         }
     };
 
@@ -198,11 +194,11 @@
         };
 
         that.startHandler = function() {
-            that.start(this, window.event.targetTouches);
+            that.start(this, that.getTouches());
         };
 
         that.moveHandler = function() {
-            that.update(this, window.event.targetTouches);
+            that.update(this, that.getTouches());
         };
 
         that.cancelHandler = function() {
