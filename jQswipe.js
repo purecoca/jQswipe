@@ -33,9 +33,10 @@
  */
  
  
- (function($) {
+ (function() {
     var swipe,
-    window = this;
+    window = this,
+    $ = window.jQuery;
 
     swipe = $.fn.swipe = function(cb) {
         $(this).bind('swipe', cb);
@@ -245,4 +246,4 @@
         return true;
     });
 
-})(jQuery);
+})();
