@@ -327,8 +327,15 @@
 					
 					expect(6);
 				});
+				
+				test("test \"chainability\" of $.fn.swipe", function(){
+					var main = $('#main');
+					same(main.swipe(function(){}), main);
+					main.unbind('swipe');
+				});
 
 			});
+			
 				
 		</script>
 		

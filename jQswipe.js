@@ -245,7 +245,7 @@
     });
     
     $.fn.swipe = function(cb) {
-        $(this).bind('swipe', cb);
+        return $(this).bind('swipe', cb);
     };
 
 })();
