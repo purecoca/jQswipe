@@ -34,35 +34,32 @@
  
  
  (function() {
-    var swipe,
-    window = this,
+    var window = this,
     $ = window.jQuery;
+    
+    $.jQswipe = {};
 
-    swipe = $.fn.swipe = function(cb) {
-        $(this).bind('swipe', cb);
-    };
-
-    swipe.Point = function(x, y) {
+    $.jQswipe.Point = function(x, y) {
         this.x = x;
         this.y = y;
     };
 
-    swipe.Point.prototype.diff = function(point) {
+    $.jQswipe.Point.prototype.diff = function(point) {
         return {
             x: this.x - point.x,
             y: this.y - point.y
         };
     };
 
-    swipe.Point.prototype.toString = function() {
+    $.jQswipe.Point.prototype.toString = function() {
         return 'x: ' + this.x + ', y: ' + this.y;
     };
 
-    swipe.Point.fromTouch = function(touch) {
-        return new $.fn.swipe.Point(touch.pageX, touch.pageY);
+    $.jQswipe.Point.fromTouch = function(touch) {
+        return new $.jQswipe.Point(touch.pageX, touch.pageY);
     };
 
-    swipe.protoSwipe = {
+    $.jQswipe.protoSwipe = {
         dataPrefix: 'events.special.swipe',
 
         bound: {
@@ -74,7 +71,7 @@
             var currentPoint;
 
             if (touches.length === 1) {
-                currentPoint = $.fn.swipe.Point.fromTouch(touches[0]);
+                currentPoint = $.jQswipe.Point.fromTouch(touches[0]);
                 this.cancelled(el, false);
                 this.ended(el, false);
                 this.startPoint(el, currentPoint);
@@ -98,7 +95,7 @@
                 return;
             }
 
-            newPoint = $.fn.swipe.Point.fromTouch(touches[0]);
+            newPoint = $.jQswipe.Point.fromTouch(touches[0]);
             if (this.validate(el, newPoint)) {
                 this.currentPoint(el, newPoint);
             } else {
@@ -171,11 +168,11 @@
         }
     };
 
-    swipe.Swipe = function(evenType, validator) {
+    $.jQswipe.Swipe = function(evenType, validator) {
         var that = this;
 
         evenType = evenType || 'swipe';
-        this.validate = validator || $.fn.swipe.protoSwipe.validate;
+        this.validate = validator || $.jQswipe.protoSwipe.validate;
         this.dataPrefix = 'events.special.' + evenType;
 
         this.setup = function(data, namespaces) {
@@ -217,11 +214,15 @@
         };
     };
 
-    swipe.Swipe.prototype = swipe.protoSwipe;
-
-    $.event.special.swipe = new swipe.Swipe();
-    $.event.special.rightSwipe = new swipe.Swipe('rightSwipe');
-    $.event.special.leftSwipe = new swipe.Swipe('leftSwipe', function(el, newPoint) {
+    $.jQswipe.Swipe.prototype = $.jQswipe.protoSwipe;
+    
+    $.jQswipe.register = function(type, validator) {
+        $.event.special[type] = new this.Swipe(type, validator);
+    };
+    
+    $.jQswipe.register('swipe');
+    $.jQswipe.register('rightSwipe');
+    $.jQswipe.register('leftSwipe', function(el, newPoint) {
         var diffWithStart = newPoint.diff(this.startPoint(el)),
             diffWithPrevious = newPoint.diff(this.previousPoint(el));
 
@@ -242,5 +243,9 @@
 
         return true;
     });
+    
+    $.fn.swipe = function(cb) {
+        $(this).bind('swipe', cb);
+    };
 
 })();
