@@ -88,7 +88,7 @@
                 return;
             }
 
-            if (touches.length === 1) {
+            if (touches && touches.length === 1) {
                 this.previousPoint(el, this.currentPoint(el));
             } else {
                 this.cancelled(el, true);
@@ -107,7 +107,7 @@
             // validate swipe (a right swipe by default)
             var diffWithStart = newPoint.diff(this.startPoint(el)),
                 diffWithPrevious = newPoint.diff(this.previousPoint(el));
-
+            
             // Should not be hight or too low
             if (diffWithStart.y > this.bound.maxWidth || diffWithStart.y < -this.bound.maxWidth) {
                 return false;
@@ -128,7 +128,13 @@
 
         end: function(el) {
             this.ended(el, true);
-            this.cancelled(el, !this.validate(el, this.currentPoint(el)));
+            
+            // we don't need to update it if it's already true
+            if (this.cancelled(el) === false &&
+                this.validate(el, this.currentPoint(el)) === false
+            ) {
+                this.cancelled(el, true);
+            }
         },
 
         data: function(el, name, value) {
