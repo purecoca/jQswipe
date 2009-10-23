@@ -69,8 +69,8 @@
 					equals( 5, diff.y, "Wrong initialisation of y" );
 				});
 				
-				test("Test protoSwipe.start", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.start", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ];
 					
@@ -86,8 +86,8 @@
 					
 				});
 				
-				test("Test protoSwipe.start with multitouch", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.start with multitouch", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [
 							{pageX: 1, pageY: 2},
@@ -98,8 +98,8 @@
 					ok(s.cancelled(el) === true, 'cancelled should be true');
 				});
 				
-				test("Test protoSwipe.update", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.update", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 5, pageY: 3} ],
@@ -122,8 +122,8 @@
 					
 				});
 				
-				test("Test protoSwipe.update with multitouch", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.update with multitouch", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 5, pageY: 3}, {pageX: 25, pageY: 23} ],
@@ -138,8 +138,8 @@
 					
 				});
 				
-				test("Test protoSwipe.update with wrong swipe on y", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.update with wrong swipe on y", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 5, pageY: 13} ],
@@ -154,8 +154,8 @@
 					
 				});
 				
-				test("Test protoSwipe.update with wrong swipe on x", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.update with wrong swipe on x", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 0, pageY: 3} ],
@@ -170,8 +170,8 @@
 					
 				});
 				
-				test("Test protoSwipe.end", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.end", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 31, pageY: 3} ];
@@ -185,8 +185,8 @@
 					ok(s.ended(el) === true, 'ended should be true');
 				});
 
-				test("Test protoSwipe.end wrong y", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.end wrong y", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 31, pageY: 13} ];
@@ -200,8 +200,8 @@
 					ok(s.ended(el) === true, 'ended should be true');
 				});
 
-				test("Test protoSwipe.end wrong x", function(){
-					var s = swipe.protoSwipe,
+				test("Test swipe.end wrong x", function(){
+					var s = $.event.special.swipe,
 						el = $('#main').get(0),
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 30, pageY: 2} ];
