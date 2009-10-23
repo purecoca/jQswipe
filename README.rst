@@ -41,8 +41,8 @@ E.g., how jQswipe add the leftSwipe::
             return false;
         }
 
-        // should not move back to the left
-        if (diffWithPrevious.x >= 0) {
+        // should not move back to the right
+        if (diffWithPrevious.x > 0) {
             return false;
         }
 
