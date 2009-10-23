@@ -117,7 +117,7 @@
         
         this.dataPrefix = 'events.special.' + eventType;
         if (validator) {
-            this.validate = validator
+            this.validate = validator;
         }
 
         this.setup = function(data, namespaces) {
