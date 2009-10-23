@@ -326,6 +326,21 @@
 					same(main.swipe(function(){}), main);
 					main.unbind('swipe');
 				});
+				
+				test("test event monkey patch", function(){
+					var t = [[{pageX: 10, pageY:20}]],
+						tt = t;
+					
+					expect(4);
+					
+					ok($.inArray($.event.props, 'touches'), 'touches added to event');
+					ok($.inArray($.event.props, 'targetTouches'), 'targetTouches added to event');
+					
+					$('#swipeTarget').bind('myEvent', function(e){
+						same(e.touches, t, 'event.touches set');
+						same(e.targetTouches, tt, 'event.targetTouches set')
+					}).trigger({type: 'myEvent', touches: t, targetTouches: tt});
+				});
 
 			});
 			

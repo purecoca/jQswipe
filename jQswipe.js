@@ -37,6 +37,16 @@
     var window = this,
     $ = window.jQuery;
     
+    /**
+     * Monkey patch to add the touches and targetTouches properties
+     * to jQuery.Event objects.
+     */
+     $.each(['touches', 'targetTouches'], function(){
+         if (!($.inArray($.event.props, this))) {
+             $.event.props.push(this);
+         }
+     });
+    
     // jQswipe namespace
     $.jQswipe = {};
 
@@ -126,12 +136,12 @@
             $el.unbind('touchend', that.endHandler);
         };
 
-        that.startHandler = function() {
-            that.start(this, that.getTouches());
+        that.startHandler = function(event) {
+            that.start(this, that.getTouches(event));
         };
 
-        that.moveHandler = function() {
-            that.update(this, that.getTouches());
+        that.moveHandler = function(event) {
+            that.update(this, that.getTouches(event));
         };
 
         that.cancelHandler = function() {
@@ -282,11 +292,11 @@
              }
          }, 
         
-        getTouches: function() {
+        getTouches: function(event) {
             var warn = window.console && window.console.warn || function () {},
-                touches = window.event && window.event.targetTouches;
+                touches = event && event.targetTouches;
             if (touches === undefined) {
-                warn('No window.event.targetTouches');
+                warn('No event.targetTouches');
             }
             return touches;
         }
