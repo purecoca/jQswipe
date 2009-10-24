@@ -17,8 +17,9 @@
  */
 
  (function() {
-	var window = this,
-	$ = window.jQuery;
+	var jQswipe,
+		window = this,
+		$ = window.jQuery;
 	
 	/**
 	 * Monkey patch to add the touches and targetTouches properties
@@ -31,7 +32,7 @@
 	 });
 	
 	// jQswipe namespace
-	$.jQswipe = {};
+	jQswipe = $.jQswipe = {};
 	
 	
 	/**
@@ -43,7 +44,7 @@
 	/**
 	 * Constructor
 	 */
-	$.jQswipe.Point = function(x, y) {
+	jQswipe.Point = function(x, y) {
 		this.x = x;
 		this.y = y;
 	};
@@ -52,7 +53,7 @@
 	/**
 	 * return the difference on x and y between two point.
 	 */
-	$.jQswipe.Point.prototype.diff = function(point) {
+	jQswipe.Point.prototype.diff = function(point) {
 		return {
 			x: this.x - point.x,
 			y: this.y - point.y
@@ -62,7 +63,7 @@
 	/**
 	 * String representation of a Point.
 	 */
-	$.jQswipe.Point.prototype.toString = function() {
+	jQswipe.Point.prototype.toString = function() {
 		return 'x: ' + this.x + ', y: ' + this.y;
 	};
 	
@@ -70,7 +71,7 @@
 	/**
 	 * Create a point from a a pair of pageX/pageY.
 	 */
-	$.jQswipe.Point.fromTouch = function(touch) {
+	jQswipe.Point.fromTouch = function(touch) {
 		return new $.jQswipe.Point(touch.pageX, touch.pageY);
 	};
 	
@@ -90,7 +91,7 @@
 	 *
 	 * Also set the swipe data namespace for storing the touches.  
 	 */
-	$.jQswipe.Swipe = function(eventType, validator) {
+	jQswipe.Swipe = function(eventType, validator) {
 		var that = this;
 	
 		eventType = eventType || 'swipe';
@@ -142,7 +143,7 @@
 	/**
 	 * prototype methodes
 	 */
-	$.jQswipe.Swipe.prototype = {
+	jQswipe.Swipe.prototype = {
 		
 		/**
 		 * prefix for data name used with $.fn.data(name, value)
@@ -288,16 +289,16 @@
 	 * Take the event name,
 	 * and the validator function that will validate each finger position of the swipe
 	 */
-	$.jQswipe.register = function(type, validator) {
+	jQswipe.register = function(type, validator) {
 		$.event.special[type] = new this.Swipe(type, validator);
 	};
 	
 	/**
 	 * Register by default a right and left swipe.
 	 */
-	$.jQswipe.register('swipe');
-	$.jQswipe.register('rightSwipe');
-	$.jQswipe.register('leftSwipe', function(el, newPoint) {
+	jQswipe.register('swipe');
+	jQswipe.register('rightSwipe');
+	jQswipe.register('leftSwipe', function(el, newPoint) {
 		var diffWithStart = newPoint.diff(this.startPoint(el)),
 			diffWithPrevious = newPoint.diff(this.previousPoint(el));
 	

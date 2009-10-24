@@ -13,7 +13,7 @@ JQSWIPE = ${DIST_DIR}jqswipe.js
 JQSWIPE_MIN = ${DIST_DIR}jqswipe.min.js
 
 
-MINJAR = java -jar ${BUILD_DIR}/yuicompressor-2.4.2.jar
+MINJAR = java -jar ${BUILD_DIR}/yuicompressor-2.4.2.jar --charset=utf-8
 VER = sed s/@VERSION/${VERSION}/
 DATE = sed 's/@DATE/'"${LAST_COMMIT}"'/'
 all: jqswipe min
