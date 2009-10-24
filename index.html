@@ -1,1 +1,96 @@
-Demo page comming...
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="viewport" content="user-scalable=no, width=device-width" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		
+		<title>jQswipe</title>
+		
+		<style type="text/css" media="screen">
+			body, h1, ul, li, a
+			{
+				padding: 0;
+				margin: 0;
+			}
+			
+			body
+			{
+				font-family: Helvetica;
+				background: #FFF;
+				color: #000;
+				overflow-x: hidden;
+				width: 100%;
+				min-height: 417px
+			}
+			
+			h1
+			{
+				box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				border-bottom: 1px solid #2d3642;
+				border-top: 1px solid #6d84a2;
+				height: 45px;
+				padding: 10px;
+				background: #6d84a2;
+				font-size: 20px;
+				font-weight: bold;
+				text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+				text-align: center;
+				color: #FFF;
+			}
+			
+			li {
+				margin: 0;
+				border-bottom: 1px solid #E0E0E0;
+				padding: 8px 0 8px 10px;
+				font-size: 20px;
+				font-weight: bold;
+				list-style: none;
+			}
+			
+			a {
+				display: block;
+				text-decoration: none;
+				float: right;
+				border: solid thin #882d13;
+				-webkit-border-radius: 6px;
+				-moz-border-radius: 6px;
+				background-image: -webkit-gradient(linear, left top, left bottom, from(#e9ede8), to(#ce401c),color-stop(0.4, #8c1b0b));
+				border-radius: 6px;
+				color: #FFF;
+				font-size: 15px;
+				padding: 3px 10px;
+				margin-right: 10px;
+			}
+		</style>
+		
+		<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+		<script src="jqswipe.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(function(){
+				// On click of 'complete' links, their list item are hidden,
+				// but hide them for now.
+				$('#tasks li > a').click(function(){
+					$(this).parent().hide();
+				}).hide();
+
+				// On swipe, show the link.
+				$('#tasks li').bind('swipe', function(){
+					$(this).children('a').show();
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<h1>Tasks</h1>
+		<ul id="tasks">
+			<li>Task 1 <a href="#tasks">remove</a></li>
+			<li>Task 2 <a href="#tasks">remove</a></li>
+			<li>Task 3 <a href="#tasks">remove</a></li>
+		</ul>
+	</body>
+</html>
+
