@@ -275,10 +275,9 @@
 		 }, 
 		
 		getTouches: function(event) {
-			var warn = window.console && window.console.warn || function () {},
-				touches = event && event.targetTouches;
-			if (touches === undefined) {
-				warn('No event.targetTouches');
+			var touches = window.event && window.event.targetTouches;
+			if (touches === undefined && window.console) {
+				console.warn('No event.targetTouches');
 			}
 			return touches;
 		}
