@@ -5,6 +5,7 @@
  * Copyright (c) 2009 Damien Lebrun
  * licenced under BSD
  * http://github.com/dinoboff/jQswipe/blob/master/LICENSE
+ * 
  * Date: @DATE
  */
  
