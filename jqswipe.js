@@ -26,11 +26,11 @@
 	 * Monkey patch to add the touches and targetTouches properties
 	 * to jQuery.Event objects.
 	 */
-	 $.each(['touches', 'targetTouches'], function(){
-		 if ($.inArray(this, $.event.props) < 0) {
-			 $.event.props.push(this);
-		 }
-	 });
+	$.each(['touches', 'targetTouches'], function(i, propName){
+		if ( $.inArray(propName, $.event.props) < 0 ) {
+			$.event.props.push(propName);
+		}
+	});
 	
 	// jQswipe namespace
 	jQswipe = $.jQswipe = {};
