@@ -27,7 +27,7 @@
 	 * to jQuery.Event objects.
 	 */
 	 $.each(['touches', 'targetTouches'], function(){
-		 if (!($.inArray($.event.props, this))) {
+		 if ($.inArray(this, $.event.props) < 0) {
 			 $.event.props.push(this);
 		 }
 	 });
@@ -275,10 +275,13 @@
 		 }, 
 		
 		getTouches: function(event) {
-			var touches = window.event && window.event.targetTouches;
-			if (touches === undefined && window.console) {
+			var touches = event.targetTouches,
+				console = window.console;
+				
+			if (touches === undefined && console) {
 				console.warn('No event.targetTouches');
 			}
+			
 			return touches;
 		}
 	};

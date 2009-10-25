@@ -329,17 +329,12 @@
 				
 				test("test event monkey patch", function(){
 					var t = [[{pageX: 10, pageY:20}]],
-						tt = t;
+						tt = t.slice(0, t.length),
+						e = $.event.fix({touches: t, targetTouches: tt});
 					
-					expect(4);
 					
-					ok($.inArray($.event.props, 'touches'), 'touches added to event');
-					ok($.inArray($.event.props, 'targetTouches'), 'targetTouches added to event');
-					
-					$('#swipeTarget').bind('myEvent', function(e){
-						same(e.touches, t, 'event.touches set');
-						same(e.targetTouches, tt, 'event.targetTouches set')
-					}).trigger({type: 'myEvent', touches: t, targetTouches: tt});
+					same(e.touches, t, 'event.touches set');
+					same(e.targetTouches, tt, 'event.targetTouches set');
 				});
 
 			});
