@@ -69,18 +69,60 @@
 					equals( diff.y, 5, "Wrong initialisation of y" );
 				});
 				
+				test("Test PointCollection", function(){
+					var p1 = new swipe.Point(0,0),
+						p2 = new swipe.Point(1,0),
+						p3 = new swipe.Point(2,0),
+						p4 = new swipe.Point(3,0),
+						points = new swipe.PointCollection(p1);
+					
+					same(points.start(), p1, "Start point should be p1");
+					same(points.previous(), p1, "Previous point should be p1");
+					same(points.current(), p1, "Current point should be p1");
+					equals(points.size(), 1);
+					points.compress();
+					equals(points.size(), 1);
+					
+					points.push(p2);
+					same(points.start(), p1, "Start point should be p1");
+					same(points.previous(), p1, "Previous point should be p1");
+					same(points.current(), p2, "Current point should be p2");
+					equals(points.size(), 2);
+					points.compress();
+					equals(points.size(), 2);
+					
+					points.push(p3);
+					same(points.start(), p1, "Start point should be p1");
+					same(points.previous(), p2, "Previous point should be p2");
+					same(points.current(), p3, "Current point should be p3");
+					equals(points.size(), 3);
+					points.compress();
+					equals(points.size(), 3);
+					
+					points.push(p4);
+					same(points.start(), p1, "Start point should be p1");
+					same(points.previous(), p3, "Previous point should be p3");
+					same(points.current(), p4, "Current point should be p4");
+					equals(points.size(), 4);
+					points.compress();
+					equals(points.size(), 3);
+					same(points.start(), p1, "Start point should be p1");
+					same(points.previous(), p3, "Previous point should be p3");
+					same(points.current(), p4, "Current point should be p4");
+					
+				});
+				
+				
 				test("Test swipe.start", function(){
 					var s = $.event.special.swipe,
 						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ];
-					
+						t1 = [ {pageX: 1, pageY: 2} ],
+						points;
 					
 					s.start(el, t1);
-					equals(s.startPoint(el).x,   1, 'start point x should be set to 1');
-					equals(s.startPoint(el).y,   2, 'start point y should be set to 2');
-					equals(s.currentPoint(el).x, 1, 'start point x should be set to 1');
-					equals(s.currentPoint(el).y, 2, 'start point y should be set to 2');
-					equals(s.previousPoint(el),  undefined, 'previousPoint should not be set');
+					points = s.points(el)
+					equals(points.start().x,   1, 'start point x should be set to 1');
+					equals(points.start(el).y,   2, 'start point y should be set to 2');
 					ok(s.cancelled(el) === false, 'cancelled should be false');
 					ok(s.ended(el) === false, 'ended should be false');
 					
@@ -104,19 +146,21 @@
 						t1 = [ {pageX: 1, pageY: 2} ],
 						t2 = [ {pageX: 5, pageY: 3} ],
 						t3 = [ {pageX: 5, pageY: 3} ],
-						t4 = [ {pageX: 10, pageY: 12} ];
+						t4 = [ {pageX: 10, pageY: 12} ],
+						points;
 					
 					s.start(el, t1);
 					s.update(el, t2);
 					s.update(el, t3);
 					s.update(el, t4);
 					
-					equals(s.startPoint(el).x,    1, 'start point x should be set to 1');
-					equals(s.startPoint(el).y,    2, 'start point y should be set to 2');
-					equals(s.previousPoint(el).x, 5, 'start point x should be set to 5');
-					equals(s.previousPoint(el).y, 3, 'start point y should be set to 3');
-					equals(s.currentPoint(el).x, 10, 'start point x should be set to 10');
-					equals(s.currentPoint(el).y, 12, 'start point y should be set to 12');
+					points = s.points(el);
+					equals(points.start().x,    1, 'start point x should be set to 1');
+					equals(points.start().y,    2, 'start point y should be set to 2');
+					equals(points.previous().x, 5, 'start point x should be set to 5');
+					equals(points.previous().y, 3, 'start point y should be set to 3');
+					equals(points.current().x, 10, 'start point x should be set to 10');
+					equals(points.current().y, 12, 'start point y should be set to 12');
 					ok(s.cancelled(el) === false, 'cancelled should be false');
 					ok(s.ended(el) === false, 'ended should be false');
 					
