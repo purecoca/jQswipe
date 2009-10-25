@@ -255,6 +255,7 @@
 			newPoint = $.jQswipe.Point.fromTouch(touches[0])
 			points.push(newPoint);
 			if (this.validate(elem, points)) {
+				points.compress();
 				this.points(elem, points);
 			} else {
 				this.cancelled(elem, true);
