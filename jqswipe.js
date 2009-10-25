@@ -164,19 +164,19 @@
 		}
 	
 		this.setup = function(data, namespaces) {
-			var $el = $(this);
-			$el.bind('touchstart', that.startHandler);
-			$el.bind('touchmove', that.moveHandler);
-			$el.bind('touchcancel', that.cancelHandler);
-			$el.bind('touchend', that.endHandler);
+			var $elem = $(this);
+			$elem.bind('touchstart', that.startHandler);
+			$elem.bind('touchmove', that.moveHandler);
+			$elem.bind('touchcancel', that.cancelHandler);
+			$elem.bind('touchend', that.endHandler);
 		};
 	
 		this.teardown = function(namespaces) {
-			var $el = $(this);
-			$el.unbind('touchstart', that.startHandler);
-			$el.unbind('touchmove', that.moveHandler);
-			$el.unbind('touchcancel', that.cancelHandler);
-			$el.unbind('touchend', that.endHandler);
+			var $elem = $(this);
+			$elem.unbind('touchstart', that.startHandler);
+			$elem.unbind('touchmove', that.moveHandler);
+			$elem.unbind('touchcancel', that.cancelHandler);
+			$elem.unbind('touchend', that.endHandler);
 		};
 	
 		that.startHandler = function(event) {
@@ -223,48 +223,48 @@
 		/**
 		 * Set initials value of swipe event and save the start position
 		 */ 
-		start: function(el, touches) {
+		start: function(elem, touches) {
 			var jQswipe = $.jQswipe;
 	
 			if (touches.length === 1) {
-				this.cancelled(el, false);
-				this.ended(el, false);
-				this.points(el, new jQswipe.PointCollection(
+				this.cancelled(elem, false);
+				this.ended(elem, false);
+				this.points(elem, new jQswipe.PointCollection(
 					jQswipe.Point.fromTouch(touches[0]))
 				);
 			} else {
-				this.cancelled(el, true);
+				this.cancelled(elem, true);
 			}
 		},
 	
 		/**
 		 * Update the last position of finger and validate it
 		 */
-		update: function(el, touches) {
-			var newPoint, points = this.points(el);
+		update: function(elem, touches) {
+			var newPoint, points = this.points(elem);
 	
-			if (this.cancelled(el)) {
+			if (this.cancelled(elem)) {
 				return;
 			}
 	
 			if (touches.length !== 1) {
-				this.cancelled(el, true);
+				this.cancelled(elem, true);
 				return;
 			}
 			
 			newPoint = $.jQswipe.Point.fromTouch(touches[0])
 			points.push(newPoint);
-			if (this.validate(el, points)) {
-				this.points(el, points);
+			if (this.validate(elem, points)) {
+				this.points(elem, points);
 			} else {
-				this.cancelled(el, true);
+				this.cancelled(elem, true);
 			}
 		},
 	
 		/**
 		 * Default swipe validator. Validate a left swipe
 		 */
-		validate: function(el, points) {
+		validate: function(elem, points) {
 			var diffWithStart = points.current().diff(points.start()),
 				diffWithPrevious = points.current().diff(points.previous());
 			
@@ -279,7 +279,7 @@
 			}
 	
 			// If swipe ended, the swipe be long enough
-			if (this.ended(el) && diffWithStart.x < this.threshold.minLength) {
+			if (this.ended(elem) && diffWithStart.x < this.threshold.minLength) {
 				return false;
 			}
 	
@@ -289,37 +289,37 @@
 		/**
 		 * Validate the last position of finger
 		 */
-		end: function(el) {
-			this.ended(el, true);
+		end: function(elem) {
+			this.ended(elem, true);
 			
 			// we don't need to update it if it's already true
-			if (this.cancelled(el) === false &&
-				this.validate(el, this.points(el)) === false
+			if (this.cancelled(elem) === false &&
+				this.validate(elem, this.points(elem)) === false
 			) {
-				this.cancelled(el, true);
+				this.cancelled(elem, true);
 			}
 		},
 		
 		/**
 		 * Accessors
 		 */
-		points: function(el, points) {
-			return this.data(el, 'points', points)
+		points: function(elem, points) {
+			return this.data(elem, 'points', points)
 		},
 	
-		cancelled: function(el, cancelled) {
-			return this.data(el, 'cancelled', cancelled);
+		cancelled: function(elem, cancelled) {
+			return this.data(elem, 'cancelled', cancelled);
 		},
 	
-		ended: function(el, ended) {
-			return this.data(el, 'ended', ended);
+		ended: function(elem, ended) {
+			return this.data(elem, 'ended', ended);
 		},
 	
 		/**
 		 * Helpers
 		 */
-		 data: function(el, name, value) {
-			 var result = $(el).data(this.dataPrefix + '.' + name, value);
+		 data: function(elem, name, value) {
+			 var result = $(elem).data(this.dataPrefix + '.' + name, value);
 			 if (value === undefined) {
 				 return result;
 			 }
@@ -352,7 +352,7 @@
 	 */
 	jQswipe.register('swipe');
 	jQswipe.register('rightSwipe');
-	jQswipe.register('leftSwipe', function(el, points) {
+	jQswipe.register('leftSwipe', function(elem, points) {
 		var diffWithStart = points.current().diff(points.start()),
 			diffWithPrevious = points.current().diff(points.previous());
 	
@@ -367,7 +367,7 @@
 		}
 	
 		// If swipe ended, the swipe be long enough
-		if (this.ended(el) && diffWithStart.x > -this.threshold.minLength) {
+		if (this.ended(elem) && diffWithStart.x > -this.threshold.minLength) {
 			return false;
 		}
 	
