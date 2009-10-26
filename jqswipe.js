@@ -84,7 +84,7 @@
 		if (startPoint) {
 			this.points.push(startPoint);
 		}
-	}
+	};
 	
 	jQswipe.PointCollection.prototype = {
 		start: function() {
@@ -103,10 +103,10 @@
 			var length = this.points.length;
 			
 			if (length < 1) {
-				return
+				return;
 			}
 			
-			index = ((Math.floor(Math.abs(index / length)) +1) * length + index) % length
+			index = ((Math.floor(Math.abs(index / length)) +1) * length + index) % length;
 			return this.points[index];
 		},
 		
@@ -252,7 +252,7 @@
 				return;
 			}
 			
-			newPoint = $.jQswipe.Point.fromTouch(touches[0])
+			newPoint = $.jQswipe.Point.fromTouch(touches[0]);
 			points.push(newPoint);
 			if (this.validate(elem, points)) {
 				points.compress();
@@ -305,7 +305,7 @@
 		 * Accessors
 		 */
 		points: function(elem, points) {
-			return this.data(elem, 'points', points)
+			return this.data(elem, 'points', points);
 		},
 	
 		cancelled: function(elem, cancelled) {
