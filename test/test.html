@@ -17,358 +17,194 @@
 		<script src="./qunit.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			jQuery(document).ready(function(){
-				var $ = jQuery, swipe = $.jQswipe, touchGenerator;
+				var $ = jQuery,
+					jQswipe = $.jQswipe,
+					touchGenerator,
+					testTouch,
+					fixtures = function () {
+						return {
+							validRightSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 40, pageY: 30}],
+								[{pageX: 50, pageY: 30}],
+								[{pageX: 60, pageY: 30}]
+							],
+							validLeftSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 20, pageY: 30}],
+								[{pageX: 10, pageY: 30}],
+								[{pageX:  0, pageY: 30}]
+							],
+							tooHighRightSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 40, pageY: 41}],
+								[{pageX: 50, pageY: 30}],
+								[{pageX: 60, pageY: 30}]
+							],
+							tooLowRightSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 40, pageY: 19}],
+								[{pageX: 50, pageY: 30}],
+								[{pageX: 60, pageY: 30}]
+							],
+							tooShortRightSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 40, pageY: 30}],
+								[{pageX: 50, pageY: 30}],
+								[{pageX: 59, pageY: 30}]
+							],
+							badStartRightSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 29, pageY: 30}],
+								[{pageX: 50, pageY: 30}],
+								[{pageX: 60, pageY: 30}]
+							],
+							tooShortLeftSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 20, pageY: 30}],
+								[{pageX: 10, pageY: 30}],
+								[{pageX:  1, pageY: 30}]
+							],
+							badStartLeftSwipe: [
+								[{pageX: 30, pageY: 30}],
+								[{pageX: 31, pageY: 30}],
+								[{pageX: 10, pageY: 30}],
+								[{pageX:  0, pageY: 30}]
+							]						};
+					};
 				
-
-				touchGenerator = function(touches) {
-					return function(){
-						return touches.shift();
-					}
-				};
-				
-				test("Test touchGenerator([ [{pageX: 30, pageY: 30}], [{pageX: 40, pageY: 30}], [{pageX: 50, pageY: 30}] ]) ", 
-					function(){
-						
-						var p1, p2, p3
-							touches = [ [{pageX: 30, pageY: 30}], [{pageX: 40, pageY: 30}], [{pageX: 50, pageY: 30}] ],
-							getTouches = touchGenerator(touches);
-						
-						p1 = swipe.Point.fromTouch(getTouches()[0]);
-						p2 = swipe.Point.fromTouch(getTouches()[0]);
-						p3 = swipe.Point.fromTouch(getTouches()[0]);
-						equals(p1.x, 30, "p1.x should be 30");
-						equals(p1.y, 30, "p1.y should be 30");
-						equals(p2.x, 40, "p2.x should be 40");
-						equals(p2.y, 30, "p2.y should be 30");
-						equals(p3.x, 50, "p3.x should be 50");
-						equals(p3.y, 30, "p3.y should be 30");
-					}
-				);
-				
-				
-				test("Test Point", function() {
-					var p1 = new swipe.Point(1, 2);
-						
-					equals( p1.x, 1, "p1.x should have been set to 1" );
-					equals( p1.y, 2, "p1.y should have been set to 2" );
-				});
-				
-				test("Test Point.fromTouch", function() {
-					var p1 = swipe.Point.fromTouch({pageX: 1, pageY: 2});
-						
-					equals( p1.x, 1, "p1.x should have been set to 1" );
-					equals( p1.y, 2, "p1.y should have been set to 2" );
-				});
-				
-				test("Test Point's diff method", function() {
-					var p1 = new swipe.Point(1, 2),
-						p2 = new swipe.Point(5, 7),
-						diff = p2.diff(p1);
-						
-					equals( diff.x, 4, "Wrong distance on x" );
-					equals( diff.y, 5, "Wrong initialisation of y" );
-				});
-				
-				test("Test PointCollection", function(){
-					var p1 = new swipe.Point(0,0),
-						p2 = new swipe.Point(1,0),
-						p3 = new swipe.Point(2,0),
-						p4 = new swipe.Point(3,0),
-						points = new swipe.PointCollection(p1);
+				test("Test Swipe (object)", function(){
+					var tc = new jQswipe.Swipe(),
+						touches = fixtures().validRightSwipe;
 					
-					same(points.start(), p1, "Start point should be p1");
-					same(points.previous(), p1, "Previous point should be p1");
-					same(points.current(), p1, "Current point should be p1");
-					equals(points.size(), 1);
-					points.compress();
-					equals(points.size(), 1);
+					tc.keepLast = 0;
+					equals(tc.push(touches[0]), 0);
+					equals(tc.push(touches[1]), 1);
+					equals(tc.push(touches[2]), 2);
+					equals(tc.push(touches[3]), 3);
 					
-					points.push(p2);
-					same(points.start(), p1, "Start point should be p1");
-					same(points.previous(), p1, "Previous point should be p1");
-					same(points.current(), p2, "Current point should be p2");
-					equals(points.size(), 2);
-					points.compress();
-					equals(points.size(), 2);
+					equals(tc.size(), 4, "No compression if keep is unset");
+					tc.keepLast = 2;
+					tc.compress();
+					equals(tc.size(), 3, "Collection size should be 3");
 					
-					points.push(p3);
-					same(points.start(), p1, "Start point should be p1");
-					same(points.previous(), p2, "Previous point should be p2");
-					same(points.current(), p3, "Current point should be p3");
-					equals(points.size(), 3);
-					points.compress();
-					equals(points.size(), 3);
-					
-					points.push(p4);
-					same(points.start(), p1, "Start point should be p1");
-					same(points.previous(), p3, "Previous point should be p3");
-					same(points.current(), p4, "Current point should be p4");
-					equals(points.size(), 4);
-					points.compress();
-					equals(points.size(), 3);
-					same(points.start(), p1, "Start point should be p1");
-					same(points.previous(), p3, "Previous point should be p3");
-					same(points.current(), p4, "Current point should be p4");
-					
-				});
-				
-				
-				test("Test swipe.start", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						points;
-					
-					s.start(el, t1);
-					points = s.points(el)
-					equals(points.start().x,   1, 'start point x should be set to 1');
-					equals(points.start(el).y,   2, 'start point y should be set to 2');
-					ok(s.cancelled(el) === false, 'cancelled should be false');
-					ok(s.ended(el) === false, 'ended should be false');
-					
-				});
-				
-				test("Test swipe.start with multitouch", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [
-							{pageX: 1, pageY: 2},
-							{pageX: 5, pageY: 7}
-						];
-					
-					s.start(el, t1);
-					ok(s.cancelled(el) === true, 'cancelled should be true');
-				});
-				
-				test("Test swipe.update", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						t2 = [ {pageX: 5, pageY: 3} ],
-						t3 = [ {pageX: 5, pageY: 3} ],
-						t4 = [ {pageX: 10, pageY: 12} ],
-						points;
-					
-					s.start(el, t1);
-					s.update(el, t2);
-					s.update(el, t3);
-					s.update(el, t4);
-					
-					points = s.points(el);
-					equals(points.start().x,    1, 'start point x should be set to 1');
-					equals(points.start().y,    2, 'start point y should be set to 2');
-					equals(points.previous().x, 5, 'start point x should be set to 5');
-					equals(points.previous().y, 3, 'start point y should be set to 3');
-					equals(points.current().x, 10, 'start point x should be set to 10');
-					equals(points.current().y, 12, 'start point y should be set to 12');
-					ok(s.cancelled(el) === false, 'cancelled should be false');
-					ok(s.ended(el) === false, 'ended should be false');
-					
-				});
-				
-				test("Test swipe.update with multitouch", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						t2 = [ {pageX: 5, pageY: 3}, {pageX: 25, pageY: 23} ],
-						t3 = [ {pageX: 10, pageY: 4} ];
-						
-					
-					s.start(el, t1);
-					s.update(el, t2);
-					ok(s.cancelled(el) === true, 'cancelled should be true');
-					s.update(el, t3);
-					ok(s.cancelled(el) === true, 'cancelled should be true');
-					
-				});
-				
-				test("Test swipe.update with wrong swipe on y", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						t2 = [ {pageX: 5, pageY: 13} ],
-						t3 = [ {pageX: 10, pageY: 4} ];
-						
-					
-					s.start(el, t1);
-					s.update(el, t2);
-					ok(s.cancelled(el) === true, 'cancelled should be true');
-					s.update(el, t3);
-					ok(s.cancelled(el) === true, 'cancelled should be true');
-					
-				});
-				
-				test("Test swipe.update with wrong swipe on x", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						t2 = [ {pageX: 0, pageY: 3} ],
-						t3 = [ {pageX: 10, pageY: 4} ];
-						
-					
-					s.start(el, t1);
-					s.update(el, t2);
-					ok(s.cancelled(el) === true, 'cancelled should be true');
-					s.update(el, t3);
-					ok(s.cancelled(el) === true, 'cancelled should be true');
-					
-				});
-				
-				test("Test swipe.end", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						t2 = [ {pageX: 31, pageY: 3} ];
-						
-					
-					s.start(el, t1);
-					s.update(el, t2);
-					s.end(el);
-					
-					ok(s.cancelled(el) === false, 'cancelled should be false');
-					ok(s.ended(el) === true, 'ended should be true');
+					same(tc.diff(0, 0), {x:0,y:0}, "diff of the same touch should be {x:0,y:0}");
+					same(tc.diff(0, -2), {x:20,y:0}, "diff with first touch and penultimate should {x:20,y:0}");
+					same(tc.diff(0, -1), {x:30,y:0}, "diff with first touch and last should {x:30,y:0}");
 				});
 
-				test("Test swipe.end wrong y", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						t2 = [ {pageX: 31, pageY: 13} ];
-						
+				testTouch = function(touches, expectedCall, settings) {
+					var $elem = $('#swipeTarget');
 					
-					s.start(el, t1);
-					s.update(el, t2);
-					s.end(el);
+					jQswipe.register('testSwipe', settings || {});
 					
-					ok(s.cancelled(el) === true, 'cancelled should be false');
-					ok(s.ended(el) === true, 'ended should be true');
-				});
+					expect(expectedCall && 2 || 1);
+					ok($.event.special.testSwipe.setup !== undefined, "testSwipe special event should be set.")
+					$elem.bind('testSwipe', function() {
+						ok(expectedCall, expectedCall ? "event should be called." : "event should not be called.");
+						});
+					
+					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
+					$elem.trigger('touchend');
 
-				test("Test swipe.end wrong x", function(){
-					var s = $.event.special.swipe,
-						el = $('#main').get(0),
-						t1 = [ {pageX: 1, pageY: 2} ],
-						t2 = [ {pageX: 30, pageY: 2} ];
-						
-					
-					s.start(el, t1);
-					s.update(el, t2);
-					s.end(el);
-					
-					ok(s.cancelled(el) === true, 'cancelled should be false');
-					ok(s.ended(el) === true, 'ended should be true');
+					delete $.event.special.testSwipe
+				}
+				
+				test("Test a right swipe event", function(){
+					testTouch(fixtures().validRightSwipe, true);
 				});
 				
-				asyncTest("Test swipe event", 1,  function(){
-					var s = $.event.special.swipe,
-						ts = [ [ {pageX: 0, pageY: 10} ], [ {pageX: 30, pageY: 0} ], [ {pageX: 30, pageY: 20} ] ],
-						el = $('#swipeTarget'),
-						_getTouches = s.getTouches;
-					
-					s.getTouches = touchGenerator(ts)
-					el.bind('swipe', function() {
-						ok(true, "swipe handler fired");
-						start();
-					})
-					el.trigger('touchstart');
-					el.trigger('touchmove');
-					el.trigger('touchmove');
-					el.trigger('touchend');
-					
-					s.getTouches = _getTouches;
+				test("Test too high right swipe event", function(){
+					testTouch(fixtures().tooHighRightSwipe, false);
+				});
+
+				test("Test too low right swipe event", function(){
+					testTouch(fixtures().tooLowRightSwipe, false);
+				});
+
+				test("Test too short right swipe event", function(){
+					testTouch(fixtures().tooShortRightSwipe, false);
 				});
 				
-				test("Test too wide swipe fails", function(){
-					var s = $.event.special.swipe,
-						ts = [ [ {pageX: 0, pageY: 10} ], [ {pageX: 30, pageY: 20} ], [ {pageX: 30, pageY: 21} ] ],
-						el = $('#swipeTarget'),
-						_getTouches = s.getTouches;
-						
-					s.getTouches = touchGenerator(ts)
-					el.bind('swipe', function() {
-						ok(false, "swipe handler should not fired");
-					});
-					
-					el.trigger('touchstart');
-					el.trigger('touchmove');
-					el.trigger('touchmove');
-					el.trigger('touchend');
-					
-					s.getTouches = _getTouches;
+				test("Test bad start right swipe event", function(){
+					testTouch(fixtures().badStartRightSwipe, false);
+				});
+
+				test("Test a left swipe event", function(){
+					testTouch(fixtures().validLeftSwipe, true, $.event.special.leftSwipe.settings);
 				});
 				
+				test("Test bad start left swipe event", function(){
+					testTouch(fixtures().badStartLeftSwipe, false, $.event.special.leftSwipe.settings);
+				});
 				
-				test("Test too short swipe fails", function(){
-					var s = $.event.special.swipe,
-						ts = [ [ {pageX: 0, pageY: 10} ], [ {pageX: 29, pageY: 10} ], [ {pageX: 29, pageY: 10} ] ],
-						el = $('#swipeTarget'),
-						_getTouches = s.getTouches;
-						
-					s.getTouches = touchGenerator(ts)
-					el.bind('swipe', function() {
-						ok(false, "swipe handler should not fired");
-					});
-					
-					el.trigger('touchstart');
-					el.trigger('touchmove');
-					el.trigger('touchmove');
-					el.trigger('touchend');
-					
-					s.getTouches = _getTouches;
+				test("Test too short swipe event", function(){
+					testTouch(fixtures().tooShortLeftSwipe, false, $.event.special.leftSwipe.settings);
 				});
-
-				test("Test rightSwipe event", function(){
-					var s = $.event.special.rightSwipe,
-						ts = [ [ {pageX: 60, pageY: 10} ], [ {pageX: 40, pageY: 20} ], [ {pageX: 30, pageY: 20} ] ],
-						el = $('#swipeTarget'),
-						_getTouches = s.getTouches;
-
-					s.getTouches = touchGenerator(ts);
-					el.bind('rightSwipe', function() {
-						ok(true, "rightSwipe handler fired");
-						start();
-					});
+				
+				test("Test two swipe event", function(){
 					
-					el.trigger('touchstart');
-					el.trigger('touchmove');
-					el.trigger('touchmove');
-					el.trigger('touchend');
+					var $elem = $('#swipeTarget'),
+						touches = fixtures().validRightSwipe;
 
-					s.getTouches = _getTouches;
-				});
-
-				test("Test rightSwipe and leftSwipe", function(){
-					var s1 = $.event.special.rightSwipe,
-						s2 = $.event.special.leftSwipe,
-						ts = [ [ {pageX: 0, pageY: 10} ], [ {pageX: 10, pageY: 0} ], [ {pageX: 30, pageY: 20} ] ],
-						el = $('#swipeTarget'),
-						_getTouches1 = s1.getTouches,
-						_getTouches2 = s2.getTouches;
-						
 					expect(1);
+					$elem.bind('rightSwipe', function() {ok(true, "should be called.");})
+					$elem.bind('leftSwipe', function() {ok(false, "should not be called.");})
 					
-					s1.getTouches = touchGenerator(ts);
-					s2.getTouches = touchGenerator(ts.slice(0, ts.length));
-					el.bind('rightSwipe', function() {
-						ok(true, "rightSwipe handler called");
-						start();
-					}).bind('leftSwipe', function(){
-						ok(false, "leftSwipe handler should not fire")
-					});
 					
-					el.trigger('touchstart');
-					el.trigger('touchmove');
-					el.trigger('touchmove');
-					el.trigger('touchend');
+					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
+					$elem.trigger('touchend');
+				});
+
+				test("Test unbind 1", function(){
+					var $elem = $('#swipeTarget'),
+						touches = fixtures().validRightSwipe;
 					
-					s1.getTouches = _getTouches1;
-					s2.getTouches = _getTouches2;
+					jQswipe.register('testSwipe');
+					
+					expect(3);
+					ok($.event.special.testSwipe.setup !== undefined, "testSwipe special event should exist")
+					$elem.bind('testSwipe', function() {ok(true, "should be called.");})
+					$elem.bind('testSwipe.foo', function() {ok(true, "should be called.");})
+					$elem.bind('testSwipe.bar', function() {ok(false, "should not be called.");})
+					$elem.unbind('testSwipe.bar')
+					
+					
+					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
+					$elem.trigger('touchend');
+					
+					delete $.event.special.testSwipe
+				});
+				
+				test("Test unbind 2", function(){
+					
+					var $elem = $('#swipeTarget'),
+						touches = fixtures().validRightSwipe;
+
+					expect(1);
+					$elem.bind('rightSwipe', function() {ok(true, "should be called.");})
+					$elem.bind('leftSwipe', function() {ok(false, "should not be called.");})
+					$elem.unbind('leftSwipe');
+					
+					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
+					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
+					$elem.trigger('touchend');
 				});
 				
 				test("test \"chainability\" of $.fn.swipe", function(){
-					var main = $('#main');
-					same(main.swipe(function(){}), main);
-					main.unbind('swipe');
+					var $elem = $('#swipeTarget');
+					same($elem.swipe(function(){}), $elem);
 				});
 				
 				test("test event monkey patch", function(){
