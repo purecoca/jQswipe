@@ -81,7 +81,7 @@
 				return this.size() -1;
 			}
 			
-			this.cancelled();
+			this.cancel();
 			return -1;
 		},
 		
