@@ -76,12 +76,15 @@
 			}
 
 			if (touch && touch.pageX !== undefined && touch.pageY !== undefined) {
-				this.touches.push(touch);
+				this.touches.push({
+					pageX: touch.pageX,
+					pageY: touch.pageY
+				});
 				this.compress();
 				return this.size() -1;
 			}
 			
-			this.cancelled();
+			this.cancel();
 			return -1;
 		},
 		
