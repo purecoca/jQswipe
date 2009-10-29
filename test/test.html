@@ -19,69 +19,108 @@
 			jQuery(document).ready(function(){
 				var $ = jQuery,
 					jQswipe = $.jQswipe,
-					touchGenerator,
+					MockEvent,
 					testTouch,
 					fixtures = function () {
 						return {
 							validRightSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 40, pageY: 30}],
-								[{pageX: 50, pageY: 30}],
-								[{pageX: 60, pageY: 30}]
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 40, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 50, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 60, pageY: 30}},
+								{type: 'touchend'}
 							],
 							validLeftSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 20, pageY: 30}],
-								[{pageX: 10, pageY: 30}],
-								[{pageX:  0, pageY: 30}]
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 20, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 10, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX:  0, pageY: 30}},
+								{type: 'touchend'}
 							],
 							tooHighRightSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 40, pageY: 41}],
-								[{pageX: 50, pageY: 30}],
-								[{pageX: 60, pageY: 30}]
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 40, pageY: 41}},
+								{type: 'touchmove',  touch: {pageX: 50, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 60, pageY: 30}},
+								{type: 'touchend'}
 							],
 							tooLowRightSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 40, pageY: 19}],
-								[{pageX: 50, pageY: 30}],
-								[{pageX: 60, pageY: 30}]
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 40, pageY: 19}},
+								{type: 'touchmove',  touch: {pageX: 50, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 60, pageY: 30}},
+								{type: 'touchend'}
 							],
 							tooShortRightSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 40, pageY: 30}],
-								[{pageX: 50, pageY: 30}],
-								[{pageX: 59, pageY: 30}]
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 40, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 50, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 59, pageY: 30}},
+								{type: 'touchend'}
 							],
 							badStartRightSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 29, pageY: 30}],
-								[{pageX: 50, pageY: 30}],
-								[{pageX: 60, pageY: 30}]
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 29, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 50, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 60, pageY: 30}},
+								{type: 'touchend'}
 							],
 							tooShortLeftSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 20, pageY: 30}],
-								[{pageX: 10, pageY: 30}],
-								[{pageX:  1, pageY: 30}]
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 20, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 10, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX:  1, pageY: 30}},
+								{type: 'touchend'}
 							],
 							badStartLeftSwipe: [
-								[{pageX: 30, pageY: 30}],
-								[{pageX: 31, pageY: 30}],
-								[{pageX: 10, pageY: 30}],
-								[{pageX:  0, pageY: 30}]
-							]						};
+								{type: 'touchstart', touch: {pageX: 30, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 31, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX: 10, pageY: 30}},
+								{type: 'touchmove',  touch: {pageX:  0, pageY: 30}},
+								{type: 'touchend'}
+							]
+						};
 					};
+				
+				MockEvent = function(events) {
+					this.events = events
+					this.index = 0;
+					this.targetTouches = [{}]
+				}
+				
+				MockEvent.prototype = {
+					next: function() {
+						
+						if (this.index === this.events.length) {
+							this.index = 0;
+						}
+						
+						this.type = this.events[this.index].type;
+						
+						if (this.events[this.index].touch) {
+							this.targetTouches[0].pageX = this.events[this.index].touch.pageX;
+							this.targetTouches[0].pageY = this.events[this.index].touch.pageY;
+						} else {
+							this.targetTouches = [{}];
+						}
+						
+						this.index++;
+
+ 						return this;
+					},
+					size: function() { return this.events.length; }
+				}
+				
 				
 				test("Test Swipe (object)", function(){
 					var tc = new jQswipe.Swipe(),
 						touches = fixtures().validRightSwipe;
 					
 					tc.keepLast = 0;
-					equals(tc.push(touches[0]), 0);
-					equals(tc.push(touches[1]), 1);
-					equals(tc.push(touches[2]), 2);
-					equals(tc.push(touches[3]), 3);
+					equals(tc.push([touches[0].touch]), 0);
+					equals(tc.push([touches[1].touch]), 1);
+					equals(tc.push([touches[2].touch]), 2);
+					equals(tc.push([touches[3].touch]), 3);
 					
 					equals(tc.size(), 4, "No compression if keep is unset");
 					tc.keepLast = 2;
@@ -93,8 +132,9 @@
 					same(tc.diff(0, -1), {x:30,y:0}, "diff with first touch and last should {x:30,y:0}");
 				});
 
-				testTouch = function(touches, expectedCall, settings) {
-					var $elem = $('#swipeTarget');
+				testTouch = function(fixture, expectedCall, settings) {
+					var $elem = $('#swipeTarget'),
+						event = new MockEvent(fixture);
 					
 					jQswipe.register('testSwipe', settings || {});
 					
@@ -104,11 +144,9 @@
 						ok(expectedCall, expectedCall ? "event should be called." : "event should not be called.");
 						});
 					
-					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
-					$elem.trigger('touchend');
+					for(var i=0, l=event.size(); i < l; i++) {
+						$elem.trigger( event.next() );
+					}
 
 					delete $.event.special.testSwipe
 				}
@@ -148,23 +186,22 @@
 				test("Test two swipe event", function(){
 					
 					var $elem = $('#swipeTarget'),
-						touches = fixtures().validRightSwipe;
+						event = new MockEvent(fixtures().validRightSwipe);
 
 					expect(1);
 					$elem.bind('rightSwipe', function() {ok(true, "should be called.");})
 					$elem.bind('leftSwipe', function() {ok(false, "should not be called.");})
 					
 					
-					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
-					$elem.trigger('touchend');
+					for(var i=0, l=event.size(); i < l; i++) {
+						$elem.trigger( event.next() );
+					}
+					
 				});
 
 				test("Test unbind 1", function(){
 					var $elem = $('#swipeTarget'),
-						touches = fixtures().validRightSwipe;
+						event = new MockEvent(fixtures().validRightSwipe);
 					
 					jQswipe.register('testSwipe');
 					
@@ -176,11 +213,9 @@
 					$elem.unbind('testSwipe.bar')
 					
 					
-					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
-					$elem.trigger('touchend');
+					for(var i=0, l=event.size(); i < l; i++) {
+						$elem.trigger( event.next() );
+					}
 					
 					delete $.event.special.testSwipe
 				});
@@ -188,18 +223,17 @@
 				test("Test unbind 2", function(){
 					
 					var $elem = $('#swipeTarget'),
-						touches = fixtures().validRightSwipe;
+						event = new MockEvent(fixtures().validRightSwipe);
 
 					expect(1);
 					$elem.bind('rightSwipe', function() {ok(true, "should be called.");})
 					$elem.bind('leftSwipe', function() {ok(false, "should not be called.");})
 					$elem.unbind('leftSwipe');
 					
-					$elem.trigger({type:'touchstart', targetTouches: touches[0]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[1]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[2]});
-					$elem.trigger({type:'touchmove', targetTouches: touches[3]});
-					$elem.trigger('touchend');
+					for(var i=0, l=event.size(); i < l; i++) {
+						$elem.trigger( event.next() );
+					}
+					
 				});
 				
 				test("test \"chainability\" of $.fn.swipe", function(){
